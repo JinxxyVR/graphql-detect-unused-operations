@@ -1,6 +1,6 @@
 node_modules
-/lib
-/lib-esm
+#/lib
+#/lib-esm
 .pnpm-debug.log
 pnpm-lock.yaml
 .idea
