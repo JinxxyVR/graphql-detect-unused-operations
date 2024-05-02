@@ -138,9 +138,11 @@ export const detectUnusedOperations = async (
   schema: Schema,
   options: Options = {}
 ): Promise<{
+  allFragmentsAndOperations: FragmentsAndOperations;
   unnecessarilyWhitelistedOperations: string[];
   unusedFragments: string[];
   unusedOperations: string[];
+  usedOperations: string[];
 }> => {
   const {
     cwd = "",
@@ -171,6 +173,7 @@ export const detectUnusedOperations = async (
   // eslint-disable-next-line
   const allFragmentsAndOperations: FragmentsAndOperations =
     await getAllFragmentsAndOperations(files, verbose);
+
   const whitelistFragmentsAndOperations = isPath(whitelist)
     ? readFileToArray(whitelist)
     : whitelist;
@@ -194,6 +197,7 @@ export const detectUnusedOperations = async (
   }
 
   return {
+    allFragmentsAndOperations,
     unnecessarilyWhitelistedOperations: intersection(
       whitelistFragmentsAndOperations,
       allFragmentsAndOperations.resolvedOperations
@@ -203,11 +207,18 @@ export const detectUnusedOperations = async (
       allFragmentsAndOperations.spreadFragments
     ),
     unusedOperations: difference(
-      schemaOperationsList,
-      union(
-        allFragmentsAndOperations.resolvedOperations,
-        whitelistFragmentsAndOperations
-      )
+        schemaOperationsList,
+        union(
+            allFragmentsAndOperations.resolvedOperations,
+            whitelistFragmentsAndOperations
+        )
+    ),
+    usedOperations: difference(
+        union(
+            allFragmentsAndOperations.resolvedOperations,
+            whitelistFragmentsAndOperations
+        ),
+      schemaOperationsList
     ),
   };
 };

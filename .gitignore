@@ -3,3 +3,4 @@ node_modules
 /lib-esm
 .pnpm-debug.log
 pnpm-lock.yaml
+.idea
